@@ -11,12 +11,12 @@ namespace AeroGear.Push
 {
     public class Registration
     {
-        public void Register(PushConfig pushConfig, MobileServiceClient mobileServiceClient)
+        public void Register(PushConfig pushConfig)
         {
-            RergisterAsync(pushConfig, mobileServiceClient).Wait();
+            RergisterAsync(pushConfig).Wait();
         }
 
-        static async Task RergisterAsync(PushConfig pushConfig, MobileServiceClient mobileServiceClient)
+        static async Task RergisterAsync(PushConfig pushConfig)
         {
 
             EasClientDeviceInformation deviceInformation = new EasClientDeviceInformation();
@@ -35,10 +35,7 @@ namespace AeroGear.Push
                 client.DefaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(UTF8Encoding.UTF8.GetBytes(pushConfig.VariantId + ":" + pushConfig.VariantSecret)));
 
                 HttpResponseMessage response = await client.PostAsJsonAsync<Installation>("rest/registry/device", installation);
-
                 response.EnsureSuccessStatusCode();
-
-                await mobileServiceClient.GetPush().RegisterNativeAsync(channel.Uri);
             }
         }
     }
