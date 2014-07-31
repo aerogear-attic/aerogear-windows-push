@@ -1,5 +1,4 @@
-﻿using Microsoft.WindowsAzure.MobileServices;
-using System;
+﻿using System;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -22,29 +21,44 @@ namespace AeroGear.Push
         static async Task RergisterAsync(PushConfig pushConfig)
         {
 
-            EasClientDeviceInformation deviceInformation = new EasClientDeviceInformation();
-            string os = deviceInformation.OperatingSystem;
-            string deviceType = deviceInformation.SystemProductName;
-
+            Installation installation = CreateInstallation(pushConfig);
             PushNotificationChannel channel = null;
 
+            string error = null;
             try
             {
                 channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
             }
             catch (Exception e) 
             {
-                new MessageDialog("Error", e.Message).ShowAsync();
-                return;
+                error = e.Message;
             }
-            
-            Installation installation = new Installation() { alias = pushConfig.Alias, operatingSystem = os, osVersion = deviceType, categories = pushConfig.Categories, deviceToken = channel.Uri };
-
-            using (var client = new UPSHttpClient(pushConfig.UnifiedPushUri))
+            if (error != null)
             {
-                client.setCredentials(pushConfig.VariantId, pushConfig.VariantSecret);
-                client.register(installation);
+                await new MessageDialog("Error", error).ShowAsync();
             }
+
+            ChannelStore channelStore = new ChannelStore();
+            if (!channel.Uri.Equals(channelStore.Read()))
+            {
+                installation.deviceToken = channel.Uri;
+                using (var client = new UPSHttpClient(pushConfig.UnifiedPushUri))
+                {
+                    client.setCredentials(pushConfig.VariantId, pushConfig.VariantSecret);
+                    client.register(installation);
+
+                    channelStore.Save(channel.Uri);
+                }
+            }
+        }
+
+        private static Installation CreateInstallation(PushConfig pushConfig)
+        {
+            EasClientDeviceInformation deviceInformation = new EasClientDeviceInformation();
+            string os = deviceInformation.OperatingSystem;
+            string deviceType = deviceInformation.SystemProductName;
+            Installation installation = new Installation() { alias = pushConfig.Alias, operatingSystem = os, osVersion = deviceType, categories = pushConfig.Categories };
+            return installation;
         }
     }
 }
