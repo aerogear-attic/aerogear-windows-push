@@ -2,30 +2,32 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace AeroGear.Push
 {
-    public class UPSHttpClient : IDisposable
+    public sealed class UPSHttpClient : IDisposable
     {
         private const string AUTHORIZATION_HEADER = "Authorization";
         private const string AUTHORIZATION_METHOD = "Basic";
         private const string REGISTRATION_ENDPOINT = "rest/registry/device";
 
         private HttpClient httpClient;
-        private Uri uri;
 
         public UPSHttpClient(Uri uri)
         {
-            this.httpClient = new HttpClient();
-            this.uri = uri;
+            httpClient = new HttpClient();
+            httpClient.BaseAddress = uri;
             httpClient.DefaultRequestHeaders.Accept.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        public async void register(Installation installation)
+        public void register(Installation installation)
         {
-            HttpResponseMessage response = await httpClient.PostAsJsonAsync<Installation>(REGISTRATION_ENDPOINT, installation);
-            response.EnsureSuccessStatusCode();
+            Task<HttpResponseMessage> response = httpClient.PostAsJsonAsync<Installation>(REGISTRATION_ENDPOINT, installation);
+            response.Wait();
+            response.Result.EnsureSuccessStatusCode();
+
         }
 
         public void setCredentials(string username, string password)
