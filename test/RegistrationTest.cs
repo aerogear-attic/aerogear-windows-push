@@ -15,7 +15,7 @@ namespace test
             Registration registration = new Registration();
 
             //when
-            registration.Register(config);
+            //registration.Register(config);
 
             //then
 
