@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AeroGear.Push
 {
-    class Installation
+    public class Installation
     {
         public string deviceToken { get; set; }
         public string operatingSystem { get; set; }
