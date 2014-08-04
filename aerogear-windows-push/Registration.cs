@@ -13,12 +13,15 @@ namespace AeroGear.Push
 {
     public class Registration
     {
+        public event EventHandler<PushReceivedEvent> PushReceivedEvent;
+        public event EventHandler<RegistrationCompleteEvent> RegistrationCompleteEvent;
+
         public void Register(PushConfig pushConfig)
         {
             RergisterAsync(pushConfig).Wait();
         }
 
-        static async Task RergisterAsync(PushConfig pushConfig)
+        async Task RergisterAsync(PushConfig pushConfig)
         {
 
             Installation installation = CreateInstallation(pushConfig);
@@ -28,6 +31,7 @@ namespace AeroGear.Push
             try
             {
                 channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+                channel.PushNotificationReceived += OnPushNotification;
             }
             catch (Exception e) 
             {
@@ -49,6 +53,26 @@ namespace AeroGear.Push
 
                     channelStore.Save(channel.Uri);
                 }
+            }
+
+            FireRegistrationCompleteEvent(channel.Uri);
+        }
+
+        private void OnPushNotification(PushNotificationChannel sender, PushNotificationReceivedEventArgs e)
+        {
+            EventHandler<PushReceivedEvent> handler = PushReceivedEvent;
+            if (handler != null)
+            {
+                handler(this, new PushReceivedEvent(e));
+            }
+        }
+
+        private void FireRegistrationCompleteEvent(string uri)
+        {
+            EventHandler<RegistrationCompleteEvent> handler = RegistrationCompleteEvent;
+            if (handler != null)
+            {
+                handler(this, new RegistrationCompleteEvent(uri));
             }
         }
 
