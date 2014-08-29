@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -14,7 +15,6 @@ namespace AeroGear.Push
     public class Registration
     {
         public event EventHandler<PushReceivedEvent> PushReceivedEvent;
-        public event EventHandler<RegistrationCompleteEvent> RegistrationCompleteEvent;
 
         public void Register(PushConfig pushConfig)
         {
@@ -45,17 +45,15 @@ namespace AeroGear.Push
             ChannelStore channelStore = new ChannelStore();
             if (!channel.Uri.Equals(channelStore.Read()))
             {
+                Debug.WriteLine("sending new token to UPS");
                 installation.deviceToken = channel.Uri;
                 using (var client = new UPSHttpClient(pushConfig.UnifiedPushUri))
                 {
                     client.setCredentials(pushConfig.VariantId, pushConfig.VariantSecret);
-                    client.register(installation);
-
                     channelStore.Save(channel.Uri);
+                    HttpResponseMessage response = await client.register(installation);
                 }
             }
-
-            FireRegistrationCompleteEvent(channel.Uri);
         }
 
         private void OnPushNotification(PushNotificationChannel sender, PushNotificationReceivedEventArgs e)
@@ -64,15 +62,6 @@ namespace AeroGear.Push
             if (handler != null)
             {
                 handler(this, new PushReceivedEvent(e));
-            }
-        }
-
-        private void FireRegistrationCompleteEvent(string uri)
-        {
-            EventHandler<RegistrationCompleteEvent> handler = RegistrationCompleteEvent;
-            if (handler != null)
-            {
-                handler(this, new RegistrationCompleteEvent(uri));
             }
         }
 

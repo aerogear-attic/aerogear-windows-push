@@ -22,12 +22,9 @@ namespace AeroGear.Push
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        public void register(Installation installation)
+        public Task<HttpResponseMessage> register(Installation installation)
         {
-            Task<HttpResponseMessage> response = httpClient.PostAsJsonAsync<Installation>(REGISTRATION_ENDPOINT, installation);
-            response.Wait();
-            response.Result.EnsureSuccessStatusCode();
-
+            return httpClient.PostAsJsonAsync<Installation>(REGISTRATION_ENDPOINT, installation);
         }
 
         public void setCredentials(string username, string password)
