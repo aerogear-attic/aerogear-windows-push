@@ -19,7 +19,7 @@ namespace test
 
             //when
             string result = store.Read();
-            Assert.AreEqual("", result);
+            Assert.AreEqual(null, result);
         }
 
         [TestMethod]
