@@ -7,24 +7,24 @@ using System.Threading.Tasks;
 namespace AeroGear.Push
 {
     using Windows.Storage;
+
     public class ChannelStore
     {
-        public async void Save(string channel)
+        private const string STORE_KEY = "Channel";
+
+        public void Save(string channel)
         {
-            StorageFile file = await OpenFile(CreationCollisionOption.ReplaceExisting);
-            await FileIO.WriteTextAsync(file, channel);
+            OpenSettings().Values[STORE_KEY] = channel;
         }
 
-        public async Task<string> Read()
+        public string Read()
         {
-            StorageFile file = await OpenFile(CreationCollisionOption.OpenIfExists);
-            return await FileIO.ReadTextAsync(file);
+            return (string) OpenSettings().Values[STORE_KEY];
         }
 
-        private async Task<StorageFile> OpenFile(CreationCollisionOption option)
+        private ApplicationDataContainer OpenSettings()
         {
-            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-            return await localFolder.CreateFileAsync("channelStore", option);
+            return ApplicationData.Current.LocalSettings;
         }
     }
 }
