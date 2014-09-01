@@ -51,7 +51,7 @@ namespace AeroGear.Push
                 {
                     client.setCredentials(pushConfig.VariantId, pushConfig.VariantSecret);
                     channelStore.Save(channel.Uri);
-                    HttpResponseMessage response = await client.register(installation);
+                    HttpResponseMessage response = client.register(installation);
                 }
             }
         }
