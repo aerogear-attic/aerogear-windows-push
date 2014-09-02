@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Networking.PushNotifications;
 using Windows.Security.ExchangeActiveSyncProvisioning;
-using Windows.Storage;
 using Windows.UI.Popups;
 
 namespace AeroGear.Push
@@ -18,13 +14,12 @@ namespace AeroGear.Push
 
         public void Register(PushConfig pushConfig)
         {
-            RergisterAsync(pushConfig).Wait();
+            Installation installation = CreateInstallation(pushConfig);
+            RegisterAsync(installation, CreateUPSHttpClient(pushConfig)).Wait();
         }
 
-        async Task RergisterAsync(PushConfig pushConfig)
+        public async Task RegisterAsync(Installation installation,  IUPSHttpClient client)
         {
-
-            Installation installation = CreateInstallation(pushConfig);
             PushNotificationChannel channel = null;
 
             string error = null;
@@ -47,13 +42,17 @@ namespace AeroGear.Push
             {
                 Debug.WriteLine("sending new token to UPS");
                 installation.deviceToken = channel.Uri;
-                using (var client = new UPSHttpClient(pushConfig.UnifiedPushUri))
+                using (client)
                 {
-                    client.setCredentials(pushConfig.VariantId, pushConfig.VariantSecret);
                     channelStore.Save(channel.Uri);
                     HttpResponseMessage response = client.register(installation);
                 }
             }
+        }
+
+        private IUPSHttpClient CreateUPSHttpClient(PushConfig pushConfig)
+        {
+            return new UPSHttpClient(pushConfig.UnifiedPushUri, pushConfig.VariantId, pushConfig.VariantSecret);
         }
 
         private void OnPushNotification(PushNotificationChannel sender, PushNotificationReceivedEventArgs e)

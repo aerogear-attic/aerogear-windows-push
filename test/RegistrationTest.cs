@@ -1,8 +1,8 @@
-﻿using AeroGear.Push;
-using System;
+﻿using System;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using System.Net.Http;
 
-namespace test
+namespace AeroGear.Push
 {
     [TestClass]
     public class RegistrationTest
@@ -11,14 +11,29 @@ namespace test
         public void ShouldRegister()
         {
             //given
-            PushConfig config = new PushConfig() { UnifiedPushUri = new Uri("http://localhost:8080/ag-push/"), VariantId = "6db5c09e-6787-492a-9798-1bc5a2915603", VariantSecret = "4fec0b5f-608e-4f07-b761-a245f58134a2" };
             Registration registration = new Registration();
 
             //when
-            //registration.Register(config);
+            var httpClient = new MockUPSHttpClient();
+            registration.RegisterAsync(new Installation(), httpClient).Wait();
 
             //then
-
+            Assert.IsTrue(httpClient.installation.deviceToken != null);
         }
+    }
+
+    public class MockUPSHttpClient: IUPSHttpClient 
+    {
+        public HttpResponseMessage register(Installation installation)
+        {
+            this.installation = installation;
+            return new HttpResponseMessage();
+        }
+
+        public void Dispose() 
+        { 
+        }
+
+        public Installation installation { get; set; }
     }
 }
