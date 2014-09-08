@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Net.Http;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace AeroGear.Push
 {
-    public interface IUPSHttpClient: IDisposable
+    public interface IUPSHttpClient
     {
-        HttpResponseMessage register(Installation installation);
+        Task<HttpStatusCode> register(Installation installation);
     }
 }

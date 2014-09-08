@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Net.Http;
+using System.Net;
 using System.Threading.Tasks;
 using Windows.Networking.PushNotifications;
 using Windows.Security.ExchangeActiveSyncProvisioning;
@@ -42,11 +42,8 @@ namespace AeroGear.Push
             {
                 Debug.WriteLine("sending new token to UPS");
                 installation.deviceToken = channel.Uri;
-                using (client)
-                {
-                    channelStore.Save(channel.Uri);
-                    HttpResponseMessage response = client.register(installation);
-                }
+                channelStore.Save(channel.Uri);
+                HttpStatusCode response = await client.register(installation);
             }
         }
 

@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using System.Net.Http;
+using System.Threading.Tasks;
+using System.Net;
 
 namespace AeroGear.Push
 {
@@ -24,14 +26,10 @@ namespace AeroGear.Push
 
     public class MockUPSHttpClient: IUPSHttpClient 
     {
-        public HttpResponseMessage register(Installation installation)
+        public override Task<HttpStatusCode> register(Installation installation)
         {
             this.installation = installation;
-            return new HttpResponseMessage();
-        }
-
-        public void Dispose() 
-        { 
+            return new Task<HttpStatusCode>( () => new HttpStatusCode());
         }
 
         public Installation installation { get; set; }
