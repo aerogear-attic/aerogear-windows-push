@@ -8,7 +8,7 @@ namespace AeroGear.Push
 {
     using Windows.Storage;
 
-    public class ChannelStore
+    public class ChannelStore : AeroGear.Push.IChannelStore
     {
         private const string STORE_KEY = "Channel";
 

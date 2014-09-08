@@ -1,14 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
-using Windows.Networking.PushNotifications;
-using Windows.Security.ExchangeActiveSyncProvisioning;
-using Windows.UI.Popups;
 
 namespace AeroGear.Push
 {
-    public class Registration
+    public abstract class Registration
     {
         public event EventHandler<PushReceivedEvent> PushReceivedEvent;
 
@@ -18,56 +16,27 @@ namespace AeroGear.Push
             RegisterAsync(installation, CreateUPSHttpClient(pushConfig)).Wait();
         }
 
-        public async Task RegisterAsync(Installation installation,  IUPSHttpClient client)
+        public void Register(PushConfig pushConfig, IUPSHttpClient client)
         {
-            PushNotificationChannel channel = null;
-
-            string error = null;
-            try
-            {
-                channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
-                channel.PushNotificationReceived += OnPushNotification;
-            }
-            catch (Exception e) 
-            {
-                error = e.Message;
-            }
-            if (error != null)
-            {
-                await new MessageDialog("Error", error).ShowAsync();
-            }
-
-            ChannelStore channelStore = new ChannelStore();
-            if (!channel.Uri.Equals(channelStore.Read()))
-            {
-                Debug.WriteLine("sending new token to UPS");
-                installation.deviceToken = channel.Uri;
-                channelStore.Save(channel.Uri);
-                HttpStatusCode response = await client.register(installation);
-            }
+            RegisterAsync(CreateInstallation(pushConfig), client).Wait();
         }
 
-        private IUPSHttpClient CreateUPSHttpClient(PushConfig pushConfig)
-        {
-            return new UPSHttpClient(pushConfig.UnifiedPushUri, pushConfig.VariantId, pushConfig.VariantSecret);
-        }
-
-        private void OnPushNotification(PushNotificationChannel sender, PushNotificationReceivedEventArgs e)
+        protected void OnPushNotification(string message, Dictionary<string, string> data)
         {
             EventHandler<PushReceivedEvent> handler = PushReceivedEvent;
             if (handler != null)
             {
-                handler(this, new PushReceivedEvent(e));
+                handler(this, new PushReceivedEvent(new PushNotification() {message = message, data = data}));
             }
         }
 
-        private static Installation CreateInstallation(PushConfig pushConfig)
+        protected abstract Task RegisterAsync(Installation installation, IUPSHttpClient iUPSHttpClient);
+
+        protected IUPSHttpClient CreateUPSHttpClient(PushConfig pushConfig)
         {
-            EasClientDeviceInformation deviceInformation = new EasClientDeviceInformation();
-            string os = deviceInformation.OperatingSystem;
-            string deviceType = deviceInformation.SystemProductName;
-            Installation installation = new Installation() { alias = pushConfig.Alias, operatingSystem = os, osVersion = deviceType, categories = pushConfig.Categories };
-            return installation;
+            return new UPSHttpClient(pushConfig.UnifiedPushUri, pushConfig.VariantId, pushConfig.VariantSecret);
         }
+
+        protected abstract Installation CreateInstallation(PushConfig pushConfig);
     }
 }
