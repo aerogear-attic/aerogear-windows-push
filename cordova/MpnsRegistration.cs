@@ -30,21 +30,13 @@ namespace AeroGear.Push
             if (channel == null)
             {
                 channel = new HttpNotificationChannel(channelName);
-                channel.ChannelUriUpdated += new EventHandler<NotificationChannelUriEventArgs>(PushChannel_ChannelUriUpdated);
-                channel.ErrorOccurred += new EventHandler<NotificationChannelErrorEventArgs>(PushChannel_ErrorOccurred);
-                channel.ShellToastNotificationReceived += new EventHandler<NotificationEventArgs>(PushChannel_ShellToastNotificationReceived);
-                channel.Open();
-                channel.BindToShellToast();
             }
-            else
-            {
-                channel.ChannelUriUpdated += new EventHandler<NotificationChannelUriEventArgs>(PushChannel_ChannelUriUpdated);
-                channel.ErrorOccurred += new EventHandler<NotificationChannelErrorEventArgs>(PushChannel_ErrorOccurred);
-                channel.ShellToastNotificationReceived += new EventHandler<NotificationEventArgs>(PushChannel_ShellToastNotificationReceived);
-                System.Diagnostics.Debug.WriteLine(channel.ChannelUri.ToString());
-                MessageBox.Show(String.Format("Channel Uri is {0}",
-                    channel.ChannelUri.ToString()));
-            }
+            channel.ChannelUriUpdated += new EventHandler<NotificationChannelUriEventArgs>(PushChannel_ChannelUriUpdated);
+            channel.ErrorOccurred += new EventHandler<NotificationChannelErrorEventArgs>(PushChannel_ErrorOccurred);
+            channel.ShellToastNotificationReceived += new EventHandler<NotificationEventArgs>(PushChannel_ShellToastNotificationReceived);
+
+            channel.Open();
+            channel.BindToShellToast();
         }
 
         private void PushChannel_ShellToastNotificationReceived(object sender, NotificationEventArgs e)
