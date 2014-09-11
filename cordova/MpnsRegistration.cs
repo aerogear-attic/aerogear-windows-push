@@ -11,6 +11,8 @@ using System.Windows.Shapes;
 using System.Threading.Tasks;
 using Microsoft.Phone.Notification;
 using Microsoft.Phone.Info;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace AeroGear.Push
 {
@@ -45,7 +47,12 @@ namespace AeroGear.Push
         private void PushChannel_ShellToastNotificationReceived(object sender, NotificationEventArgs e)
         {
             string message = e.Collection["wp:Text1"];
-            OnPushNotification(message, null);
+            IDictionary<string, string> data = null;
+            if (e.Collection["wp:Param"] != null)
+            {
+                data = UrlQueryParser.ParseQueryString(e.Collection["wp:Param"]);
+            }
+            OnPushNotification(message, data);
         }
 
         private void PushChannel_ErrorOccurred(object sender, NotificationChannelErrorEventArgs e)

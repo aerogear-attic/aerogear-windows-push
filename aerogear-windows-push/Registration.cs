@@ -19,7 +19,7 @@ namespace AeroGear.Push
             await Register(CreateInstallation(pushConfig), client);
         }
 
-        protected void OnPushNotification(string message, Dictionary<string, string> data)
+        protected void OnPushNotification(string message, IDictionary<string, string> data)
         {
             EventHandler<PushReceivedEvent> handler = PushReceivedEvent;
             if (handler != null)

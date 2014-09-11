@@ -84,7 +84,6 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IChannelStore.cs" />
     <Compile Include="Installation.cs" />
     <Compile Include="PushReceivedEvent.cs" />
     <Compile Include="IUPSHttpClient.cs" />
@@ -93,6 +92,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PushConfig.cs" />
     <Compile Include="UPSHttpClient.cs" />
+    <Compile Include="UrlQueryParser.cs" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>

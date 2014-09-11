@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Activation;
+using Windows.Foundation;
 using Windows.Networking.PushNotifications;
 using Windows.Security.ExchangeActiveSyncProvisioning;
 using Windows.UI.Popups;
@@ -45,7 +43,15 @@ namespace AeroGear.Push
         private void OnPushNotification(PushNotificationChannel sender, PushNotificationReceivedEventArgs args)
         {
             string message = args.ToastNotification.Content.InnerText;
-            OnPushNotification(message, null);
+
+            var launch = args.ToastNotification.Content.GetElementsByTagName("toast")[0].Attributes.GetNamedItem("launch");
+            IDictionary<string, string> data = new Dictionary<string, string>();
+            if (launch != null)
+            {
+                data = UrlQueryParser.ParseQueryString(launch.InnerText);
+            }
+
+            OnPushNotification(message, data);
         }
 
         protected override Installation CreateInstallation(PushConfig pushConfig)
