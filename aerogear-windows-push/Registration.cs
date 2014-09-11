@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace AeroGear.Push
@@ -10,15 +8,15 @@ namespace AeroGear.Push
     {
         public event EventHandler<PushReceivedEvent> PushReceivedEvent;
 
-        public void Register(PushConfig pushConfig)
+        public async Task Register(PushConfig pushConfig)
         {
             Installation installation = CreateInstallation(pushConfig);
-            RegisterAsync(installation, CreateUPSHttpClient(pushConfig)).Wait();
+            await Register(installation, CreateUPSHttpClient(pushConfig));
         }
 
-        public void Register(PushConfig pushConfig, IUPSHttpClient client)
+        public async Task Register(PushConfig pushConfig, IUPSHttpClient client)
         {
-            RegisterAsync(CreateInstallation(pushConfig), client).Wait();
+            await Register(CreateInstallation(pushConfig), client);
         }
 
         protected void OnPushNotification(string message, Dictionary<string, string> data)
@@ -30,9 +28,9 @@ namespace AeroGear.Push
             }
         }
 
-        protected abstract Task RegisterAsync(Installation installation, IUPSHttpClient iUPSHttpClient);
+        protected abstract Task Register(Installation installation, IUPSHttpClient iUPSHttpClient);
 
-        protected IUPSHttpClient CreateUPSHttpClient(PushConfig pushConfig)
+        private IUPSHttpClient CreateUPSHttpClient(PushConfig pushConfig)
         {
             return new UPSHttpClient(pushConfig.UnifiedPushUri, pushConfig.VariantId, pushConfig.VariantSecret);
         }

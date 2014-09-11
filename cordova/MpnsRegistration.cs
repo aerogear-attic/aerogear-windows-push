@@ -18,25 +18,28 @@ namespace AeroGear.Push
     {
         private Installation installation;
         private IUPSHttpClient client;
-        protected async override Task RegisterAsync(Installation installation, IUPSHttpClient client)
+        protected async override Task Register(Installation installation, IUPSHttpClient client)
         {
             this.installation = installation;
             this.client = client;
             HttpNotificationChannel channel;
             string channelName = "ToastChannel";
 
-            channel = HttpNotificationChannel.Find(channelName);
-
-            if (channel == null)
+            await Task.Run(() =>
             {
-                channel = new HttpNotificationChannel(channelName);
-            }
-            channel.ChannelUriUpdated += new EventHandler<NotificationChannelUriEventArgs>(PushChannel_ChannelUriUpdated);
-            channel.ErrorOccurred += new EventHandler<NotificationChannelErrorEventArgs>(PushChannel_ErrorOccurred);
-            channel.ShellToastNotificationReceived += new EventHandler<NotificationEventArgs>(PushChannel_ShellToastNotificationReceived);
+                channel = HttpNotificationChannel.Find(channelName);
 
-            channel.Open();
-            channel.BindToShellToast();
+                if (channel == null)
+                {
+                    channel = new HttpNotificationChannel(channelName);
+                }
+                channel.ChannelUriUpdated += new EventHandler<NotificationChannelUriEventArgs>(PushChannel_ChannelUriUpdated);
+                channel.ErrorOccurred += new EventHandler<NotificationChannelErrorEventArgs>(PushChannel_ErrorOccurred);
+                channel.ShellToastNotificationReceived += new EventHandler<NotificationEventArgs>(PushChannel_ShellToastNotificationReceived);
+
+                channel.Open();
+                channel.BindToShellToast();
+            });
         }
 
         private void PushChannel_ShellToastNotificationReceived(object sender, NotificationEventArgs e)

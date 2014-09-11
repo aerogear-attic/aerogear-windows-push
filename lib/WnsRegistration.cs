@@ -13,7 +13,7 @@ namespace AeroGear.Push
 {
     public class WnsRegistration : Registration
     {
-        protected async override Task RegisterAsync(Installation installation, IUPSHttpClient client)
+        protected async override Task Register(Installation installation, IUPSHttpClient client)
         {
             PushNotificationChannel channel = null;
 
