@@ -1,73 +1,40 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Net;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Windows.Networking.PushNotifications;
-using Windows.Security.ExchangeActiveSyncProvisioning;
-using Windows.UI.Popups;
 
 namespace AeroGear.Push
 {
-    public class Registration
+    public abstract class Registration
     {
         public event EventHandler<PushReceivedEvent> PushReceivedEvent;
 
-        public void Register(PushConfig pushConfig)
+        public async Task Register(PushConfig pushConfig)
         {
             Installation installation = CreateInstallation(pushConfig);
-            RegisterAsync(installation, CreateUPSHttpClient(pushConfig)).Wait();
+            await Register(installation, CreateUPSHttpClient(pushConfig));
         }
 
-        public async Task RegisterAsync(Installation installation,  IUPSHttpClient client)
+        public async Task Register(PushConfig pushConfig, IUPSHttpClient client)
         {
-            PushNotificationChannel channel = null;
+            await Register(CreateInstallation(pushConfig), client);
+        }
 
-            string error = null;
-            try
+        protected void OnPushNotification(string message, IDictionary<string, string> data)
+        {
+            EventHandler<PushReceivedEvent> handler = PushReceivedEvent;
+            if (handler != null)
             {
-                channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
-                channel.PushNotificationReceived += OnPushNotification;
-            }
-            catch (Exception e) 
-            {
-                error = e.Message;
-            }
-            if (error != null)
-            {
-                await new MessageDialog("Error", error).ShowAsync();
-            }
-
-            ChannelStore channelStore = new ChannelStore();
-            if (!channel.Uri.Equals(channelStore.Read()))
-            {
-                Debug.WriteLine("sending new token to UPS");
-                installation.deviceToken = channel.Uri;
-                channelStore.Save(channel.Uri);
-                HttpStatusCode response = await client.register(installation);
+                handler(this, new PushReceivedEvent(new PushNotification() {message = message, data = data}));
             }
         }
+
+        protected abstract Task Register(Installation installation, IUPSHttpClient iUPSHttpClient);
 
         private IUPSHttpClient CreateUPSHttpClient(PushConfig pushConfig)
         {
             return new UPSHttpClient(pushConfig.UnifiedPushUri, pushConfig.VariantId, pushConfig.VariantSecret);
         }
 
-        private void OnPushNotification(PushNotificationChannel sender, PushNotificationReceivedEventArgs e)
-        {
-            EventHandler<PushReceivedEvent> handler = PushReceivedEvent;
-            if (handler != null)
-            {
-                handler(this, new PushReceivedEvent(e));
-            }
-        }
-
-        private static Installation CreateInstallation(PushConfig pushConfig)
-        {
-            EasClientDeviceInformation deviceInformation = new EasClientDeviceInformation();
-            string os = deviceInformation.OperatingSystem;
-            string deviceType = deviceInformation.SystemProductName;
-            Installation installation = new Installation() { alias = pushConfig.Alias, operatingSystem = os, osVersion = deviceType, categories = pushConfig.Categories };
-            return installation;
-        }
+        protected abstract Installation CreateInstallation(PushConfig pushConfig);
     }
 }
