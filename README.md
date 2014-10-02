@@ -9,7 +9,9 @@ Add the NuGet package to your project and add the following code:
 ```csharp
 protected override void OnNavigatedTo(NavigationEventArgs e)
 {
-    PushConfig pushConfig = new PushConfig() { UnifiedPushUri = new Uri(""), VariantId = "", VariantSecret = "" }; //[1]
+    PushConfig pushConfig = new PushConfig() {
+        UnifiedPushUri = new Uri(""), VariantId = "", VariantSecret = ""
+    }; //[1]
     Registration registration = new WnsRegistration();      // [2]
     registration.PushReceivedEvent += HandleNotification;
     registration.Register(pushConfig);
@@ -21,5 +23,5 @@ void HandleNotification(object sender, PushReceivedEvent e)
 }
 ```
 
-[1] add the url, variantId and varaintSecret of you Unified Push server
-[2] choose WnsRegistration for wns otherwise MpnsRegistration.
+* [1] add the url, variantId and varaintSecret of you Unified Push server
+* [2] choose WnsRegistration for wns otherwise MpnsRegistration.
