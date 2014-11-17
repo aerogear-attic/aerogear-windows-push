@@ -15,28 +15,15 @@ namespace AeroGear.Push
         {
             PushNotificationChannel channel = null;
 
-            string error = null;
-            try
-            {
-                channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
-                channel.PushNotificationReceived += OnPushNotification;
-            }
-            catch (Exception e)
-            {
-                error = e.Message;
-            }
-            if (error != null)
-            {
-                await new MessageDialog("Error", error).ShowAsync();
-            }
+            channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+            channel.PushNotificationReceived += OnPushNotification;
 
             ChannelStore channelStore = new ChannelStore();
             if (!channel.Uri.Equals(channelStore.Read()))
             {
-                //Debug.WriteLine("sending new token to UPS");
                 installation.deviceToken = channel.Uri;
-                channelStore.Save(channel.Uri);
                 HttpStatusCode response = await client.register(installation);
+                channelStore.Save(channel.Uri);
             }
         }
 
