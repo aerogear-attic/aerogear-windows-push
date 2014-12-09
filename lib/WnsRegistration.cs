@@ -11,7 +11,7 @@ namespace AeroGear.Push
 {
     public class WnsRegistration : Registration
     {
-        protected async override Task Register(Installation installation, IUPSHttpClient client)
+        protected async override Task<string> Register(Installation installation, IUPSHttpClient client)
         {
             PushNotificationChannel channel = null;
 
@@ -22,9 +22,11 @@ namespace AeroGear.Push
             if (!channel.Uri.Equals(channelStore.Read()))
             {
                 installation.deviceToken = channel.Uri;
-                HttpStatusCode response = await client.register(installation);
+                await client.register(installation);
                 channelStore.Save(channel.Uri);
             }
+
+            return installation.deviceToken;
         }
 
         private void OnPushNotification(PushNotificationChannel sender, PushNotificationReceivedEventArgs args)
