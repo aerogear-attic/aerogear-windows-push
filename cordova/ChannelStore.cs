@@ -14,7 +14,7 @@ namespace AeroGear.Push
 
         public void Save(string channel)
         {
-            OpenSettings().Add(STORE_KEY, channel);
+            OpenSettings()[STORE_KEY] = channel;
         }
 
         public string Read()

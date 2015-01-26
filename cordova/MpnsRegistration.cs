@@ -34,8 +34,8 @@ namespace AeroGear.Push
                     installation.deviceToken = e.ChannelUri.ToString();
                     await client.register(installation);
                     channelStore.Save(installation.deviceToken);
-                    tcs.TrySetResult(installation.deviceToken);
                 }
+                tcs.TrySetResult(installation.deviceToken);
             };
             channel.ErrorOccurred += (s, e) =>
             {
