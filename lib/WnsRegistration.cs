@@ -11,24 +11,6 @@ namespace AeroGear.Push
 {
     public class WnsRegistration : Registration
     {
-        protected async override Task<string> Register(Installation installation, IUPSHttpClient client)
-        {
-            PushNotificationChannel channel = null;
-
-            channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
-            channel.PushNotificationReceived += OnPushNotification;
-
-            ChannelStore channelStore = new ChannelStore();
-            if (!channel.Uri.Equals(channelStore.Read()))
-            {
-                installation.deviceToken = channel.Uri;
-                await client.register(installation);
-                channelStore.Save(channel.Uri);
-            }
-
-            return installation.deviceToken;
-        }
-
         private void OnPushNotification(PushNotificationChannel sender, PushNotificationReceivedEventArgs args)
         {
             string message = args.ToastNotification.Content.InnerText;
@@ -50,7 +32,18 @@ namespace AeroGear.Push
             string deviceType = deviceInformation.SystemProductName;
             Installation installation = new Installation() { alias = pushConfig.Alias, operatingSystem = os, osVersion = deviceType, categories = pushConfig.Categories };
             return installation;
+        }
 
+        protected async override Task<string> ChannelUri()
+        {
+            PushNotificationChannel channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+            channel.PushNotificationReceived += OnPushNotification;
+            return channel.Uri;
+        }
+
+        protected override IChannelStore CreateChannelStore()
+        {
+            return new ChannelStore();
         }
     }
 }

@@ -10,13 +10,22 @@ namespace AeroGear.Push
 
         public async Task<string> Register(PushConfig pushConfig)
         {
-            Installation installation = CreateInstallation(pushConfig);
-            return await Register(installation, CreateUPSHttpClient(pushConfig));
+            return await Register(pushConfig, CreateUPSHttpClient(pushConfig));
         }
 
         public async Task<string> Register(PushConfig pushConfig, IUPSHttpClient client)
         {
-            return await Register(CreateInstallation(pushConfig), client);
+            Installation installation = CreateInstallation(pushConfig);
+            IChannelStore channelStore = CreateChannelStore();
+            string channelUri = await ChannelUri();
+            var token = pushConfig.VariantId + channelUri;
+            if (!token.Equals(channelStore.Read()))
+            {
+                installation.deviceToken = channelUri;
+                await client.register(installation);
+                channelStore.Save(token);
+            }
+            return installation.deviceToken;
         }
 
         protected void OnPushNotification(string message, IDictionary<string, string> data)
@@ -28,13 +37,15 @@ namespace AeroGear.Push
             }
         }
 
-        protected abstract Task<string> Register(Installation installation, IUPSHttpClient iUPSHttpClient);
-
         private IUPSHttpClient CreateUPSHttpClient(PushConfig pushConfig)
         {
             return new UPSHttpClient(pushConfig.UnifiedPushUri, pushConfig.VariantId, pushConfig.VariantSecret);
         }
 
         protected abstract Installation CreateInstallation(PushConfig pushConfig);
+
+        protected abstract IChannelStore CreateChannelStore();
+
+        protected abstract Task<string> ChannelUri();
     }
 }

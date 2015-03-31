@@ -10,14 +10,14 @@ namespace AeroGear.Push
     public class RegistrationTest
     {
         [TestMethod]
-        public void ShouldRegister()
+        public async Task ShouldRegister()
         {
             //given
             var httpClient = new MockUPSHttpClient();
             Registration registration = new WnsRegistration();
 
             //when
-            registration.Register(new PushConfig(), httpClient);
+            await registration.Register(new PushConfig() { VariantId = "dummy" }, httpClient);
 
             //then
             Assert.IsTrue(httpClient.installation.deviceToken != null);

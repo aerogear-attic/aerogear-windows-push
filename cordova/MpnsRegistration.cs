@@ -9,46 +9,6 @@ namespace AeroGear.Push
 {
     public class MpnsRegistration : Registration
     {
-        private Installation installation;
-        private IUPSHttpClient client;
-        protected async override Task<string> Register(Installation installation, IUPSHttpClient client)
-        {
-            this.installation = installation;
-            this.client = client;
-            HttpNotificationChannel channel;
-            string channelName = "ToastChannel";
-
-            channel = HttpNotificationChannel.Find(channelName);
-
-            if (channel == null)
-            {
-                channel = new HttpNotificationChannel(channelName);
-            }
-
-            var tcs = new TaskCompletionSource<string>();
-            channel.ChannelUriUpdated += async (s, e) =>
-            {
-                ChannelStore channelStore = new ChannelStore();
-                if (!e.ChannelUri.ToString().Equals(channelStore.Read()))
-                {
-                    installation.deviceToken = e.ChannelUri.ToString();
-                    await client.register(installation);
-                    channelStore.Save(installation.deviceToken);
-                }
-                tcs.TrySetResult(installation.deviceToken);
-            };
-            channel.ErrorOccurred += (s, e) =>
-            {
-                tcs.TrySetException(new Exception(e.Message));
-            };
-
-            channel.ShellToastNotificationReceived += new EventHandler<NotificationEventArgs>(PushChannel_ShellToastNotificationReceived);
-
-            channel.Open();
-            channel.BindToShellToast();
-            return await tcs.Task;
-        }
-
         private void PushChannel_ShellToastNotificationReceived(object sender, NotificationEventArgs e)
         {
             string message = e.Collection["wp:Text1"];
@@ -75,6 +35,40 @@ namespace AeroGear.Push
             string osVersion = Environment.OSVersion.Version.ToString();
             Installation installation = new Installation() { alias = pushConfig.Alias, operatingSystem = operatingSystem, osVersion = osVersion, categories = pushConfig.Categories };
             return installation;
+        }
+
+        protected async override Task<string> ChannelUri()
+        {
+            HttpNotificationChannel channel;
+            string channelName = "ToastChannel";
+
+            channel = HttpNotificationChannel.Find(channelName);
+
+            if (channel == null)
+            {
+                channel = new HttpNotificationChannel(channelName);
+            }
+
+            var tcs = new TaskCompletionSource<string>();
+            channel.ChannelUriUpdated += (s, e) =>
+            {
+                tcs.TrySetResult(e.ChannelUri.ToString());
+            };
+            channel.ErrorOccurred += (s, e) =>
+            {
+                tcs.TrySetException(new Exception(e.Message));
+            };
+
+            channel.ShellToastNotificationReceived += new EventHandler<NotificationEventArgs>(PushChannel_ShellToastNotificationReceived);
+
+            channel.Open();
+            channel.BindToShellToast();
+            return await tcs.Task;
+        }
+
+        protected override IChannelStore CreateChannelStore()
+        {
+            return new ChannelStore();
         }
     }
 }
