@@ -1,6 +1,8 @@
 aerogear-windows-push
 =====================
 
+[![Build status](https://ci.appveyor.com/api/projects/status/dprb3dbsy5pwo7c7?svg=true)](https://ci.appveyor.com/project/edewit/aerogear-windows-push)
+
 Push client sdk to register with UPS and enable push notifications on windows phone Windows Phone 8 (Silverlight-based) and Windows Phone App 8.1 (WinRT-based)
 
 |                 | Project Info  |
