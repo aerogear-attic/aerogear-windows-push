@@ -22,9 +22,20 @@ using System.Threading.Tasks;
 
 namespace AeroGear.Push
 {
+    /// <summary>
+    /// A store to keep the registered push notification channel in.
+    /// </summary>
     public interface IChannelStore
     {
+        /// <summary>
+        /// Read the current channel
+        /// </summary>
+        /// <returns>the current channel that is being used</returns>
         string Read();
+        /// <summary>
+        /// Save the channel
+        /// </summary>
+        /// <param name="channel">the channel used currently</param>
         void Save(string channel);
     }
 }

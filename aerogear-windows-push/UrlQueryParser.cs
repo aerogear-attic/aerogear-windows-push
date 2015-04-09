@@ -24,6 +24,9 @@ using System.Threading.Tasks;
 
 namespace AeroGear.Push
 {
+    /// <summary>
+    /// Parses a query string like ?test=bla&super=cool into a IDictionary.
+    /// </summary>
     public class UrlQueryParser
     {
         public static IDictionary<string, string> ParseQueryString(string url)

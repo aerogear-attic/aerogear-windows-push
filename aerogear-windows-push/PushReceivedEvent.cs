@@ -21,6 +21,9 @@ using System.Text;
 
 namespace AeroGear.Push
 {
+    /// <summary>
+    /// Event fired to indicate that a message has been received.
+    /// </summary>
     public class PushReceivedEvent : EventArgs
     {
         public PushReceivedEvent(PushNotification Args)

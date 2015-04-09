@@ -22,6 +22,9 @@ using System.Threading.Tasks;
 
 namespace AeroGear.Push
 {
+    /// <summary>
+    /// Model object containing the information send to UPS as part of the registration.
+    /// </summary>
     public class Installation
     {
         public string deviceToken { get; set; }

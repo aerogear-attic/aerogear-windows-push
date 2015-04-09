@@ -21,6 +21,9 @@ using System.Text;
 
 namespace AeroGear.Push
 {
+    /// <summary>
+    /// Client configuration model object
+    /// </summary>
     public class PushConfig
     {
         public Uri UnifiedPushUri { get; set; }

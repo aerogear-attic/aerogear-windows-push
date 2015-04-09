@@ -24,6 +24,9 @@ namespace AeroGear.Push
 {
     using Windows.Storage;
 
+    /// <summary>
+    /// Implementation of IChannelStore using LocalSettings
+    /// </summary>
     public class ChannelStore : IChannelStore
     {
         private const string STORE_KEY = "Channel";

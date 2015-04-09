@@ -21,6 +21,9 @@ using System.Text;
 
 namespace AeroGear.Push
 {
+    /// <summary>
+    /// Model object for the notification with the message and the user-data.
+    /// </summary>
     public class PushNotification
     {
         public string message { get; set; }

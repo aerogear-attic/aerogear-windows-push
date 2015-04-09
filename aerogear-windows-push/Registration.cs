@@ -20,6 +20,9 @@ using System.Threading.Tasks;
 
 namespace AeroGear.Push
 {
+    /// <summary>
+    /// Base class for registration implementors need to implment how to get the Channel and ChannelStore
+    /// </summary>
     public abstract class Registration
     {
         public event EventHandler<PushReceivedEvent> PushReceivedEvent;
@@ -58,10 +61,23 @@ namespace AeroGear.Push
             return new UPSHttpClient(pushConfig.UnifiedPushUri, pushConfig.VariantId, pushConfig.VariantSecret);
         }
 
+        /// <summary>
+        /// Create an installation with as much details as posible so it's easy to find it again in UPS
+        /// </summary>
+        /// <param name="pushConfig">Push configuration to base the installation off</param>
+        /// <returns>Installation filled with the details</returns>
         protected abstract Installation CreateInstallation(PushConfig pushConfig);
 
+        /// <summary>
+        /// Create a target specific ChannelStore
+        /// </summary>
+        /// <returns>A channel store that works on specified target</returns>
         protected abstract IChannelStore CreateChannelStore();
 
+        /// <summary>
+        /// Register with the push network and return the current channel uri
+        /// </summary>
+        /// <returns>current channel uri</returns>
         protected abstract Task<string> ChannelUri();
     }
 }

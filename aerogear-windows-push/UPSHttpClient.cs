@@ -24,6 +24,9 @@ using System.Threading.Tasks;
 
 namespace AeroGear.Push
 {
+    /// <summary>
+    /// Implementation of the IUPSHttpClient.
+    /// </summary>
     public sealed class UPSHttpClient : IUPSHttpClient
     {
         private const string AUTHORIZATION_HEADER = "Authorization";

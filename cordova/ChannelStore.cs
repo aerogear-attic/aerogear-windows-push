@@ -24,6 +24,9 @@ namespace AeroGear.Push
 {
     using System.IO.IsolatedStorage;
 
+    /// <summary>
+    /// Implementation of IChannelStore using IsolatedStorage
+    /// </summary>
     public class ChannelStore : IChannelStore
     {
         private const string STORE_KEY = "Channel";

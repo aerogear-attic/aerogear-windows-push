@@ -20,6 +20,9 @@ using System.Threading.Tasks;
 
 namespace AeroGear.Push
 {
+    /// <summary>
+    /// Http client that 'knows' how to send information to UPS (e.g. use the proper credentials)
+    /// </summary>
     public interface IUPSHttpClient
     {
         Task<HttpStatusCode> register(Installation installation);
