@@ -18,22 +18,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace AeroGear.Push
 {
     /// <summary>
-    /// Client configuration model object
+    /// A store to keep the registered push notification channel in.
     /// </summary>
-    public class PushConfig
+    public interface IChannelStore
     {
-        public Uri UnifiedPushUri { get; set; }
-
-        public string VariantId { get; set; }
-
-        public string VariantSecret { get; set; }
-
-        public IList<string> Categories { get; set; }
-
-        public string Alias { get; set; }
+        /// <summary>
+        /// Read the current channel
+        /// </summary>
+        /// <returns>the current channel that is being used</returns>
+        string Read();
+        /// <summary>
+        /// Save the channel
+        /// </summary>
+        /// <param name="channel">the channel used currently</param>
+        void Save(string channel);
     }
 }

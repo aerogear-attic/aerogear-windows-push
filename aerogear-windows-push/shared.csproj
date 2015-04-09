@@ -84,6 +84,7 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IChannelStore.cs" />
     <Compile Include="Installation.cs" />
     <Compile Include="PushReceivedEvent.cs" />
     <Compile Include="IUPSHttpClient.cs" />

@@ -1,22 +1,50 @@
-﻿using System;
+/**
+ * JBoss, Home of Professional Open Source
+ * Copyright Red Hat, Inc., and individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace AeroGear.Push
 {
+    /// <summary>
+    /// Base class for registration implementors need to implment how to get the Channel and ChannelStore
+    /// </summary>
     public abstract class Registration
     {
         public event EventHandler<PushReceivedEvent> PushReceivedEvent;
 
         public async Task<string> Register(PushConfig pushConfig)
         {
-            Installation installation = CreateInstallation(pushConfig);
-            return await Register(installation, CreateUPSHttpClient(pushConfig));
+            return await Register(pushConfig, CreateUPSHttpClient(pushConfig));
         }
 
         public async Task<string> Register(PushConfig pushConfig, IUPSHttpClient client)
         {
-            return await Register(CreateInstallation(pushConfig), client);
+            Installation installation = CreateInstallation(pushConfig);
+            IChannelStore channelStore = CreateChannelStore();
+            string channelUri = await ChannelUri();
+            var token = pushConfig.VariantId + channelUri;
+            if (!token.Equals(channelStore.Read()))
+            {
+                installation.deviceToken = channelUri;
+                await client.register(installation);
+                channelStore.Save(token);
+            }
+            return installation.deviceToken;
         }
 
         protected void OnPushNotification(string message, IDictionary<string, string> data)
@@ -28,13 +56,28 @@ namespace AeroGear.Push
             }
         }
 
-        protected abstract Task<string> Register(Installation installation, IUPSHttpClient iUPSHttpClient);
-
         private IUPSHttpClient CreateUPSHttpClient(PushConfig pushConfig)
         {
             return new UPSHttpClient(pushConfig.UnifiedPushUri, pushConfig.VariantId, pushConfig.VariantSecret);
         }
 
+        /// <summary>
+        /// Create an installation with as much details as posible so it's easy to find it again in UPS
+        /// </summary>
+        /// <param name="pushConfig">Push configuration to base the installation off</param>
+        /// <returns>Installation filled with the details</returns>
         protected abstract Installation CreateInstallation(PushConfig pushConfig);
+
+        /// <summary>
+        /// Create a target specific ChannelStore
+        /// </summary>
+        /// <returns>A channel store that works on specified target</returns>
+        protected abstract IChannelStore CreateChannelStore();
+
+        /// <summary>
+        /// Register with the push network and return the current channel uri
+        /// </summary>
+        /// <returns>current channel uri</returns>
+        protected abstract Task<string> ChannelUri();
     }
 }
