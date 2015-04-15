@@ -45,13 +45,28 @@ namespace AeroGear.Push
 
         public async Task<HttpStatusCode> register(Installation installation)
         {
+            return await Request(installation, delegate(HttpWebRequest request) { });
+        }
+
+        public async Task<HttpStatusCode> register(Installation installation, string pushMetricsId)
+        {
+
+            return await Request(installation, delegate(HttpWebRequest request)
+            {
+                request.Headers["push-identifier"] = pushMetricsId;
+            });
+        }
+
+        private async Task<HttpStatusCode> Request(Installation installation, Action<HttpWebRequest> initAction)
+        {
             using (var postStream = await Task<Stream>.Factory.FromAsync(request.BeginGetRequestStream, request.EndGetRequestStream, request))
             {
+                initAction(request);
                 DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Installation));
                 serializer.WriteObject(postStream, installation);
             }
 
-            HttpWebResponse responseObject = (HttpWebResponse) await Task<WebResponse>.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, request);
+            HttpWebResponse responseObject = (HttpWebResponse)await Task<WebResponse>.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, request);
             var responseStream = responseObject.GetResponseStream();
             var streamReader = new StreamReader(responseStream);
 

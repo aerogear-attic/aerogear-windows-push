@@ -83,7 +83,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ChannelStore.cs" />
+    <Compile Include="LocalStore.cs" />
     <Compile Include="MpnsRegistration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

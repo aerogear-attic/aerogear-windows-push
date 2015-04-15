@@ -39,6 +39,7 @@ namespace AeroGear.Push
             if (launch != null)
             {
                 data = UrlQueryParser.ParseQueryString(launch.InnerText);
+                CreateChannelStore().Save(PUSH_ID_KEY, data[PUSH_ID_KEY]);
             }
 
             OnPushNotification(message, data);
@@ -60,9 +61,9 @@ namespace AeroGear.Push
             return channel.Uri;
         }
 
-        protected override IChannelStore CreateChannelStore()
+        protected override ILocalStore CreateChannelStore()
         {
-            return new ChannelStore();
+            return new LocalStore();
         }
     }
 }

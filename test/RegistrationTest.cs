@@ -33,7 +33,7 @@ namespace AeroGear.Push
             Registration registration = new WnsRegistration();
 
             //when
-            await registration.Register(new PushConfig() { VariantId = "dummy" }, httpClient);
+            await registration.Register(new PushConfig() { VariantId = "dummy" }, null, httpClient);
 
             //then
             Assert.IsTrue(httpClient.installation.deviceToken != null);

@@ -26,5 +26,6 @@ namespace AeroGear.Push
     public interface IUPSHttpClient
     {
         Task<HttpStatusCode> register(Installation installation);
+        Task<HttpStatusCode> register(Installation installation, string pushMetricsId);
     }
 }
