@@ -26,7 +26,7 @@ namespace AeroGear.Push
     public abstract class Registration
     {
         private const string CHANNEL_KEY = "Channel";
-        protected const string PUSH_ID_KEY = "push-identifier";
+        protected const string PUSH_ID_KEY = "aerogear-push-id";
 
         public event EventHandler<PushReceivedEvent> PushReceivedEvent;
 
