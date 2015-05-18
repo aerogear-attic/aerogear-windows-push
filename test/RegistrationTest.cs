@@ -33,7 +33,7 @@ namespace AeroGear.Push
             Registration registration = new WnsRegistration();
 
             //when
-            await registration.Register(new PushConfig() { VariantId = "dummy" }, null, httpClient);
+            await registration.Register(new PushConfig() { VariantId = "dummy" }, httpClient);
 
             //then
             Assert.IsTrue(httpClient.installation.deviceToken != null);
@@ -42,12 +42,16 @@ namespace AeroGear.Push
 
     public class MockUPSHttpClient: IUPSHttpClient 
     {
-        public Task<HttpStatusCode> register(Installation installation)
+        public Task<HttpStatusCode> Register(Installation installation)
         {
             this.installation = installation;
             return Task.Run(() => HttpStatusCode.OK);
         }
 
+        public Task<HttpStatusCode> SendMetrics(string pushMessageId) 
+        {
+            return Task.Run(() => HttpStatusCode.OK);
+        }
         public Installation installation { get; set; }
     }
 }

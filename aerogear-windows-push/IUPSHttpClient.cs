@@ -25,7 +25,18 @@ namespace AeroGear.Push
     /// </summary>
     public interface IUPSHttpClient
     {
-        Task<HttpStatusCode> register(Installation installation);
-        Task<HttpStatusCode> register(Installation installation, string pushMetricsId);
+        /// <summary>
+        /// Register this device with the UPS
+        /// </summary>
+        /// <param name="installation">containing the device information</param>
+        /// <returns>the http response status</returns>
+        Task<HttpStatusCode> Register(Installation installation);
+
+        /// <summary>
+        /// Send metrics to UPS e.g. this messages was used to open the app
+        /// </summary>
+        /// <param name="pushMetricsId">the metrics id of the message that opened the app</param>
+        /// <returns></returns>
+        Task<HttpStatusCode> SendMetrics(string pushMetricsId);
     }
 }

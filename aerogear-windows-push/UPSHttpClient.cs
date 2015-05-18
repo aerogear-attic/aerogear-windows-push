@@ -32,45 +32,53 @@ namespace AeroGear.Push
         private const string AUTHORIZATION_HEADER = "Authorization";
         private const string AUTHORIZATION_METHOD = "Basic";
         private const string REGISTRATION_ENDPOINT = "rest/registry/device";
+        private const string METRIC_ENDPOINT = REGISTRATION_ENDPOINT + "/pushMessage/";
 
-        private HttpWebRequest request;
+        public Uri uri { get; set; }
+        public string username { get; set; }
+        public string password { get; set; }
 
         public UPSHttpClient(Uri uri, string username, string password)
         {
-            request = (HttpWebRequest)WebRequest.Create(uri.ToString() + REGISTRATION_ENDPOINT);
+            this.uri = uri;
+            this.username = username;
+            this.password = password;
+        }
+
+        private HttpWebRequest CreateRequest(string endpoint)
+        {
+            var request = (HttpWebRequest)WebRequest.Create(endpoint);
             request.ContentType = "application/json";
             request.Headers[AUTHORIZATION_HEADER] = AUTHORIZATION_METHOD + " " + CreateHash(username, password);
+
+            return request;
+        }
+
+        public async Task<HttpStatusCode> Register(Installation installation)
+        {
+            var request = CreateRequest(uri.ToString() + REGISTRATION_ENDPOINT);
             request.Method = "POST";
-        }
-
-        public async Task<HttpStatusCode> register(Installation installation)
-        {
-            return await Request(installation, delegate(HttpWebRequest request) { });
-        }
-
-        public async Task<HttpStatusCode> register(Installation installation, string pushMetricsId)
-        {
-
-            return await Request(installation, delegate(HttpWebRequest request)
-            {
-                request.Headers["push-identifier"] = pushMetricsId;
-            });
-        }
-
-        private async Task<HttpStatusCode> Request(Installation installation, Action<HttpWebRequest> initAction)
-        {
             using (var postStream = await Task<Stream>.Factory.FromAsync(request.BeginGetRequestStream, request.EndGetRequestStream, request))
             {
-                initAction(request);
                 DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Installation));
                 serializer.WriteObject(postStream, installation);
             }
 
-            HttpWebResponse responseObject = (HttpWebResponse)await Task<WebResponse>.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, request);
-            var responseStream = responseObject.GetResponseStream();
-            var streamReader = new StreamReader(responseStream);
+            return await ReadResponse(request);
+        }
 
-            await streamReader.ReadToEndAsync();
+        public async Task<HttpStatusCode> SendMetrics(string pushMetricsId)
+        {
+            var request = CreateRequest(uri.ToString() + METRIC_ENDPOINT + pushMetricsId);
+            request.Method = "PUT";
+
+            return await ReadResponse(request);
+        }
+
+        private static async Task<HttpStatusCode> ReadResponse(HttpWebRequest request)
+        {
+            HttpWebResponse responseObject = (HttpWebResponse)await Task<WebResponse>.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, request);
+            await new StreamReader(responseObject.GetResponseStream()).ReadToEndAsync();
             return responseObject.StatusCode;
         }
 

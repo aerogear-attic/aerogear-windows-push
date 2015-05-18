@@ -39,7 +39,6 @@ namespace AeroGear.Push
             if (launch != null)
             {
                 data = UrlQueryParser.ParseQueryString(launch.InnerText);
-                CreateChannelStore().Save(PUSH_ID_KEY, data[PUSH_ID_KEY]);
             }
 
             OnPushNotification(message, data);
