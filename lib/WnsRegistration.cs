@@ -60,9 +60,9 @@ namespace AeroGear.Push
             return channel.Uri;
         }
 
-        protected override IChannelStore CreateChannelStore()
+        protected override ILocalStore CreateChannelStore()
         {
-            return new ChannelStore();
+            return new LocalStore();
         }
     }
 }

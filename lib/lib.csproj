@@ -86,7 +86,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChannelStore.cs" />
+    <Compile Include="LocalStore.cs" />
     <Compile Include="WnsRegistration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

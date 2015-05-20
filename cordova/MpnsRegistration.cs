@@ -23,6 +23,9 @@ using System.Collections.Generic;
 
 namespace AeroGear.Push
 {
+    /// <summary>
+    /// Mpns based version 
+    /// </summary>
     public class MpnsRegistration : Registration
     {
         private void PushChannel_ShellToastNotificationReceived(object sender, NotificationEventArgs e)
@@ -82,9 +85,9 @@ namespace AeroGear.Push
             return await tcs.Task;
         }
 
-        protected override IChannelStore CreateChannelStore()
+        protected override ILocalStore CreateChannelStore()
         {
-            return new ChannelStore();
+            return new LocalStore();
         }
     }
 }

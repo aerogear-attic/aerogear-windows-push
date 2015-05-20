@@ -22,20 +22,27 @@ using System.Threading.Tasks;
 
 namespace AeroGear.Push
 {
+    using System.IO.IsolatedStorage;
+
     /// <summary>
-    /// A store to keep the registered push notification channel in.
+    /// Implementation of ILocalStore using IsolatedStorage
     /// </summary>
-    public interface IChannelStore
+    public class LocalStore : ILocalStore
     {
-        /// <summary>
-        /// Read the current channel
-        /// </summary>
-        /// <returns>the current channel that is being used</returns>
-        string Read();
-        /// <summary>
-        /// Save the channel
-        /// </summary>
-        /// <param name="channel">the channel used currently</param>
-        void Save(string channel);
+        public void Save(string key, string value)
+        {
+            OpenSettings()[key] = value;
+        }
+
+        public string Read(string key)
+        {
+            IsolatedStorageSettings settings = OpenSettings();
+            return settings.Contains(key) ? (string) settings[key] : null;
+        }
+
+        private IsolatedStorageSettings OpenSettings()
+        {
+            return IsolatedStorageSettings.ApplicationSettings;
+        }
     }
 }

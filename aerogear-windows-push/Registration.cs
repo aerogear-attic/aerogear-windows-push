@@ -25,6 +25,9 @@ namespace AeroGear.Push
     /// </summary>
     public abstract class Registration
     {
+        private const string CHANNEL_KEY = "Channel";
+        protected const string PUSH_ID_KEY = "aerogear-push-id";
+
         public event EventHandler<PushReceivedEvent> PushReceivedEvent;
 
         public async Task<string> Register(PushConfig pushConfig)
@@ -35,21 +38,32 @@ namespace AeroGear.Push
         public async Task<string> Register(PushConfig pushConfig, IUPSHttpClient client)
         {
             Installation installation = CreateInstallation(pushConfig);
-            IChannelStore channelStore = CreateChannelStore();
+            ILocalStore store = CreateChannelStore();
             string channelUri = await ChannelUri();
             var token = pushConfig.VariantId + channelUri;
-            if (!token.Equals(channelStore.Read()))
+            if (!token.Equals(store.Read(CHANNEL_KEY)))
             {
                 installation.deviceToken = channelUri;
-                await client.register(installation);
-                channelStore.Save(token);
+                await client.Register(installation);
+
+                store.Save(CHANNEL_KEY, token);
             }
             return installation.deviceToken;
+        }
+
+        public async Task SendMetricWhenAppLaunched(PushConfig pushConfig)
+        {
+            ILocalStore store = CreateChannelStore();
+            var pushIdentifier = store.Read(PUSH_ID_KEY);
+            var client = CreateUPSHttpClient(pushConfig);
+            await client.SendMetrics(pushIdentifier);
+            store.Save(PUSH_ID_KEY, null);
         }
 
         protected void OnPushNotification(string message, IDictionary<string, string> data)
         {
             EventHandler<PushReceivedEvent> handler = PushReceivedEvent;
+            CreateChannelStore().Save(PUSH_ID_KEY, data[PUSH_ID_KEY]);
             if (handler != null)
             {
                 handler(this, new PushReceivedEvent(new PushNotification() {message = message, data = data}));
@@ -72,7 +86,7 @@ namespace AeroGear.Push
         /// Create a target specific ChannelStore
         /// </summary>
         /// <returns>A channel store that works on specified target</returns>
-        protected abstract IChannelStore CreateChannelStore();
+        protected abstract ILocalStore CreateChannelStore();
 
         /// <summary>
         /// Register with the push network and return the current channel uri

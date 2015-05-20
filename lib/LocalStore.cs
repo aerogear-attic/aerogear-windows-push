@@ -22,29 +22,26 @@ using System.Threading.Tasks;
 
 namespace AeroGear.Push
 {
-    using System.IO.IsolatedStorage;
+    using Windows.Storage;
 
     /// <summary>
-    /// Implementation of IChannelStore using IsolatedStorage
+    /// Implementation of IChannelStore using LocalSettings
     /// </summary>
-    public class ChannelStore : IChannelStore
+    public class LocalStore : ILocalStore
     {
-        private const string STORE_KEY = "Channel";
-
-        public void Save(string channel)
+        public void Save(string key, string value)
         {
-            OpenSettings()[STORE_KEY] = channel;
+            OpenSettings().Values[key] = value;
         }
 
-        public string Read()
+        public string Read(string key)
         {
-            IsolatedStorageSettings settings = OpenSettings();
-            return settings.Contains(STORE_KEY) ? (string) settings[STORE_KEY] : null;
+            return (string) OpenSettings().Values[key];
         }
 
-        private IsolatedStorageSettings OpenSettings()
+        private ApplicationDataContainer OpenSettings()
         {
-            return IsolatedStorageSettings.ApplicationSettings;
+            return ApplicationData.Current.LocalSettings;
         }
     }
 }

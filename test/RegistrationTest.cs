@@ -42,12 +42,16 @@ namespace AeroGear.Push
 
     public class MockUPSHttpClient: IUPSHttpClient 
     {
-        public Task<HttpStatusCode> register(Installation installation)
+        public Task<HttpStatusCode> Register(Installation installation)
         {
             this.installation = installation;
             return Task.Run(() => HttpStatusCode.OK);
         }
 
+        public Task<HttpStatusCode> SendMetrics(string pushMessageId) 
+        {
+            return Task.Run(() => HttpStatusCode.OK);
+        }
         public Installation installation { get; set; }
     }
 }

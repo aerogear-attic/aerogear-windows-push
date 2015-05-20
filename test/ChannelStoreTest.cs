@@ -30,10 +30,10 @@ namespace AeroGear.Push
         public void ShouldRead()
         {
             //given
-            ChannelStore store = new ChannelStore();
+            LocalStore store = new LocalStore();
 
             //when
-            string result = store.Read();
+            string result = store.Read("key");
             Assert.AreEqual(null, result);
         }
 
@@ -41,14 +41,15 @@ namespace AeroGear.Push
         public void ShouldStore()
         {
             //given
-            ChannelStore store = new ChannelStore();
+            string key = "thekey";
+            LocalStore store = new LocalStore();
             string channel = "dummy channel string";
 
             //when
-            store.Save(channel);
+            store.Save(key, channel);
 
             //then
-            string result = store.Read();
+            string result = store.Read(key);
             Assert.AreEqual(channel, result);
         }
     }

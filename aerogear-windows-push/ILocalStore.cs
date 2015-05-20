@@ -22,28 +22,22 @@ using System.Threading.Tasks;
 
 namespace AeroGear.Push
 {
-    using Windows.Storage;
-
     /// <summary>
-    /// Implementation of IChannelStore using LocalSettings
+    /// A store to keep the local machine releated settings in.
     /// </summary>
-    public class ChannelStore : IChannelStore
+    public interface ILocalStore
     {
-        private const string STORE_KEY = "Channel";
-
-        public void Save(string channel)
-        {
-            OpenSettings().Values[STORE_KEY] = channel;
-        }
-
-        public string Read()
-        {
-            return (string) OpenSettings().Values[STORE_KEY];
-        }
-
-        private ApplicationDataContainer OpenSettings()
-        {
-            return ApplicationData.Current.LocalSettings;
-        }
+        /// <summary>
+        /// Read a value
+        /// </summary>
+        /// <param name="key">the key to read</param>
+        /// <returns>the value or null if there is nothing found under specified key</returns>
+        string Read(string key);
+        /// <summary>
+        /// Save a value
+        /// </summary>
+        /// <param name="key">The key of the saved data</param>
+        /// <param name="value">The value to be saved</param>
+        void Save(string key, string value);
     }
 }
