@@ -1,0 +1,6 @@
+﻿{
+    "pushServerURL": "http://localhost:8080/ag-push",
+    "variantID": "1234456-234320",
+    "variantSecret": "1234456-234320",
+    "categories": ["one", "two"]
+}

@@ -20,6 +20,9 @@ using System.Windows;
 using System.Threading.Tasks;
 using Microsoft.Phone.Notification;
 using System.Collections.Generic;
+using Windows.ApplicationModel;
+using System.Runtime.Serialization.Json;
+using System.IO;
 
 namespace AeroGear.Push
 {
@@ -88,6 +91,12 @@ namespace AeroGear.Push
         protected override ILocalStore CreateChannelStore()
         {
             return new LocalStore();
+        }
+
+        public async override Task<PushConfig> LoadConfigJson(string filename)
+        {
+            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(PushConfig));
+            return (PushConfig)serializer.ReadObject(File.OpenRead(filename));
         }
     }
 }
