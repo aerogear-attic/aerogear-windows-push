@@ -63,7 +63,10 @@ namespace AeroGear.Push
         protected void OnPushNotification(string message, IDictionary<string, string> data)
         {
             EventHandler<PushReceivedEvent> handler = PushReceivedEvent;
-            CreateChannelStore().Save(PUSH_ID_KEY, data[PUSH_ID_KEY]);
+            if (data != null)
+            {
+                CreateChannelStore().Save(PUSH_ID_KEY, data[PUSH_ID_KEY]);
+            }
             if (handler != null)
             {
                 handler(this, new PushReceivedEvent(new PushNotification() {message = message, data = data}));
