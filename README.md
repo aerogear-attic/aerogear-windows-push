@@ -50,14 +50,14 @@ or you can place a `push-config.json` file in the root of your project be sure t
 
 This will be automatically be picked up by the registration:
 
-```charp
+```csharp
 Registration registration = new WnsRegistration();
 registration.Register();
 ```
 
 if you want to dynamically add categories or an alias you can combine the two above:
 
-```charp
+```csharp
 Registration registration = new WnsRegistration();
 PushConfig config = registration.LoadConfigJson("push-config.json");
 config.Categories = //user categories
