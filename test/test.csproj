@@ -74,6 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChannelStoreTest.cs" />
+    <Compile Include="ConfigReadTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegistrationTest.cs" />
   </ItemGroup>
@@ -84,6 +85,7 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
+    <Content Include="push-config.json" />
     <None Include="test_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>

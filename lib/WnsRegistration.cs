@@ -16,12 +16,12 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Net;
+using System.IO;
+using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
-using Windows.Foundation;
+using Windows.ApplicationModel;
 using Windows.Networking.PushNotifications;
 using Windows.Security.ExchangeActiveSyncProvisioning;
-using Windows.UI.Popups;
 
 namespace AeroGear.Push
 {
@@ -63,6 +63,13 @@ namespace AeroGear.Push
         protected override ILocalStore CreateChannelStore()
         {
             return new LocalStore();
+        }
+
+        public async override Task<PushConfig> LoadConfigJson(string filename)
+        {
+            var file = await Package.Current.InstalledLocation.GetFileAsync(filename);
+            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(PushConfig));
+            return (PushConfig) serializer.ReadObject(await file.OpenStreamForReadAsync());
         }
     }
 }

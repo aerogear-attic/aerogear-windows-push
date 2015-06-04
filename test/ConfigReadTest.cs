@@ -1,4 +1,4 @@
-/**
+﻿/**
  * JBoss, Home of Professional Open Source
  * Copyright Red Hat, Inc., and individual contributors.
  *
@@ -14,33 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace AeroGear.Push
 {
-    /// <summary>
-    /// Client configuration model object
-    /// </summary>
-    [DataContract]
-    public class PushConfig
+    [TestClass]
+    public class ConfigReadTest
     {
-        [DataMember(IsRequired = true, Name = "pushServerURL")]
-        public Uri UnifiedPushUri { get; set; }
+        [TestMethod]
+        public async Task shouldReadLocalPushConfig()
+        {
+            //given
+            var registration = new WnsRegistration();
 
-        [DataMember(Name = "variantID")]
-        public string VariantId { get; set; }
+            //when
+            var config = await registration.LoadConfigJson("push-config.json");
 
-        [DataMember(Name = "variantSecret")]
-        public string VariantSecret { get; set; }
-
-        [DataMember(Name = "categories")]
-        public IList<string> Categories { get; set; }
-
-        [DataMember(Name = "alias")]
-        public string Alias { get; set; }
+            //then
+            Assert.AreNotEqual(null, config);
+            Assert.AreEqual(new Uri("http://localhost:8080/ag-push"), config.UnifiedPushUri);
+            Assert.IsTrue(config.Categories.Contains("one"));
+        }
     }
 }
