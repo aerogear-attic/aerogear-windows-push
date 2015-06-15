@@ -14,27 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Networking.PushNotifications;
 using Windows.Security.ExchangeActiveSyncProvisioning;
+using Windows.UI.Xaml.Controls;
 
 namespace AeroGear.Push
 {
     /// <summary>
-    /// Wns based version
+    ///     Wns based version
     /// </summary>
     public class WnsRegistration : Registration
     {
         private void OnPushNotification(PushNotificationChannel sender, PushNotificationReceivedEventArgs args)
         {
-            string message = args.ToastNotification.Content.InnerText;
+            if (args.ToastNotification == null) return;
+            var message = args.ToastNotification.Content.InnerText;
 
-            var launch = args.ToastNotification.Content.GetElementsByTagName("toast")[0].Attributes.GetNamedItem("launch");
+            var launch =
+                args.ToastNotification.Content.GetElementsByTagName("toast")[0].Attributes.GetNamedItem("launch");
             IDictionary<string, string> data = new Dictionary<string, string>();
             if (launch != null)
             {
@@ -46,16 +51,22 @@ namespace AeroGear.Push
 
         protected override Installation CreateInstallation(PushConfig pushConfig)
         {
-            EasClientDeviceInformation deviceInformation = new EasClientDeviceInformation();
-            string os = deviceInformation.OperatingSystem;
-            string deviceType = deviceInformation.SystemProductName;
-            Installation installation = new Installation() { alias = pushConfig.Alias, operatingSystem = os, osVersion = deviceType, categories = pushConfig.Categories };
+            var deviceInformation = new EasClientDeviceInformation();
+            var os = deviceInformation.OperatingSystem;
+            var deviceType = deviceInformation.SystemProductName;
+            var installation = new Installation
+            {
+                alias = pushConfig.Alias,
+                operatingSystem = os,
+                osVersion = deviceType,
+                categories = pushConfig.Categories
+            };
             return installation;
         }
 
-        protected async override Task<string> ChannelUri()
+        protected override async Task<string> ChannelUri()
         {
-            PushNotificationChannel channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+            var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
             channel.PushNotificationReceived += OnPushNotification;
             return channel.Uri;
         }
@@ -65,10 +76,10 @@ namespace AeroGear.Push
             return new LocalStore();
         }
 
-        public async override Task<PushConfig> LoadConfigJson(string filename)
+        public override async Task<PushConfig> LoadConfigJson(string filename)
         {
             var file = await Package.Current.InstalledLocation.GetFileAsync(filename);
-            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(PushConfig));
+            var serializer = new DataContractJsonSerializer(typeof (PushConfig));
             return (PushConfig) serializer.ReadObject(await file.OpenStreamForReadAsync());
         }
     }
