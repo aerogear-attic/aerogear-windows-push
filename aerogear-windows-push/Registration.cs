@@ -82,7 +82,7 @@ namespace AeroGear.Push
             }
             if (handler != null)
             {
-                handler(this, new PushReceivedEvent(new PushNotification() {message = message, data = data}));
+                handler(this, new PushReceivedEvent(new PushNotification() {Message = message, Data = data}));
             }
         }
 

@@ -14,16 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 
 namespace AeroGear.Push
 {
     /// <summary>
-    /// Client configuration model object
+    ///     Client configuration model object
     /// </summary>
     [DataContract]
     public class PushConfig
