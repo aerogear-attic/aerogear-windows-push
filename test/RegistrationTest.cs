@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
-using System.Threading.Tasks;
+
 using System.Net;
+using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 
 namespace AeroGear.Push
 {
@@ -27,29 +28,30 @@ namespace AeroGear.Push
         public async Task ShouldRegister()
         {
             //given
-            var httpClient = new MockUPSHttpClient();
+            var httpClient = new MockUpsHttpClient();
             Registration registration = new WnsRegistration();
 
             //when
-            await registration.Register(new PushConfig() { VariantId = "dummy" }, httpClient);
+            await registration.Register(new PushConfig {VariantId = "dummy"}, httpClient);
 
             //then
-            Assert.IsTrue(httpClient.installation.deviceToken != null);
+            Assert.IsTrue(httpClient.Installation.deviceToken != null);
         }
     }
 
-    public class MockUPSHttpClient: IUPSHttpClient 
+    public class MockUpsHttpClient : IUPSHttpClient
     {
+        public Installation Installation { get; private set; }
+
         public Task<HttpStatusCode> Register(Installation installation)
         {
-            this.installation = installation;
+            Installation = installation;
             return Task.Run(() => HttpStatusCode.OK);
         }
 
-        public Task<HttpStatusCode> SendMetrics(string pushMessageId) 
+        public Task<HttpStatusCode> SendMetrics(string pushMessageId)
         {
             return Task.Run(() => HttpStatusCode.OK);
         }
-        public Installation installation { get; set; }
     }
 }

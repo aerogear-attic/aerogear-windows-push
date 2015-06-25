@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 
 namespace AeroGear.Push
@@ -25,10 +26,10 @@ namespace AeroGear.Push
         public void ShouldRead()
         {
             //given
-            LocalStore store = new LocalStore();
+            var store = new LocalStore();
 
             //when
-            string result = store.Read("key");
+            var result = store.Read("key");
             Assert.AreEqual(null, result);
         }
 
@@ -36,15 +37,15 @@ namespace AeroGear.Push
         public void ShouldStore()
         {
             //given
-            string key = "thekey";
-            LocalStore store = new LocalStore();
-            string channel = "dummy channel string";
+            const string key = "thekey";
+            var store = new LocalStore();
+            const string channel = "dummy channel string";
 
             //when
             store.Save(key, channel);
 
             //then
-            string result = store.Read(key);
+            var result = store.Read(key);
             Assert.AreEqual(channel, result);
         }
     }
