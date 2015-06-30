@@ -64,6 +64,47 @@ namespace AeroGear.Push
             return installation.deviceToken;
         }
 
+        /// <summary>
+        /// Update the categories 
+        /// </summary>
+        /// <param name="categories">The categories for this device</param>
+        /// <returns>Void</returns>
+        public async Task SetCategories(List<string> categories)
+        {
+            var pushConfig = await LoadConfigJson(FILE_NAME);
+            pushConfig.Categories = categories;
+            await UpdateConfig(pushConfig, CreateUPSHttpClient(pushConfig));
+        }
+
+        /// <summary>
+        /// update the alias
+        /// </summary>
+        /// <param name="alias">The alias for this device</param>
+        /// <returns>Void</returns>
+        public async Task SetAlias(string alias)
+        {
+            var pushConfig = await LoadConfigJson(FILE_NAME);
+            pushConfig.Alias = alias;
+            await UpdateConfig(pushConfig, CreateUPSHttpClient(pushConfig));
+        }
+
+        /// <summary>
+        /// Update the entire configuration
+        /// </summary>
+        /// <param name="pushConfig">the configuration to update</param>
+        /// <returns>Void</returns>
+        public async Task UpdateConfig(PushConfig pushConfig)
+        {
+            await UpdateConfig(pushConfig, CreateUPSHttpClient(pushConfig));
+        }
+
+        public async Task UpdateConfig(PushConfig pushConfig, IUPSHttpClient client)
+        {
+            var installation = CreateInstallation(pushConfig);
+            installation.deviceToken = CreateChannelStore().Read(CHANNEL_KEY).Substring(pushConfig.VariantId.Length);
+            await client.Register(installation);
+        }
+
         public async Task SendMetricWhenAppLaunched(PushConfig pushConfig)
         {
             ILocalStore store = CreateChannelStore();
