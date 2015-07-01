@@ -27,7 +27,7 @@ namespace AeroGear.Push
     public abstract class Registration
     {
         private const string CHANNEL_KEY = "Channel";
-        protected const string PUSH_ID_KEY = "aerogear-push-id";
+        public const string PUSH_ID_KEY = "aerogear-push-id";
         private const string FILE_NAME = "push-config.json";
 
         public event EventHandler<PushReceivedEvent> PushReceivedEvent;
@@ -114,10 +114,16 @@ namespace AeroGear.Push
             store.Save(PUSH_ID_KEY, null);
         }
 
+        public async Task SendMetricWhenAppLaunched(PushConfig pushConfig, string pushIdentifier)
+        {
+            var client = CreateUPSHttpClient(pushConfig);
+            await client.SendMetrics(pushIdentifier);
+        }
+
         protected void OnPushNotification(string message, IDictionary<string, string> data)
         {
             EventHandler<PushReceivedEvent> handler = PushReceivedEvent;
-            if (data != null)
+            if (data != null && data.ContainsKey(PUSH_ID_KEY))
             {
                 CreateChannelStore().Save(PUSH_ID_KEY, data[PUSH_ID_KEY]);
             }
