@@ -123,7 +123,7 @@ namespace AeroGear.Push
         protected void OnPushNotification(string message, IDictionary<string, string> data)
         {
             EventHandler<PushReceivedEvent> handler = PushReceivedEvent;
-            if (data != null)
+            if (data != null && data.ContainsKey(PUSH_ID_KEY))
             {
                 CreateChannelStore().Save(PUSH_ID_KEY, data[PUSH_ID_KEY]);
             }
