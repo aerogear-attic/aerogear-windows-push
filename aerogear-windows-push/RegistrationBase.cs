@@ -24,7 +24,7 @@ namespace AeroGear.Push
     /// <summary>
     /// Base class for registration implementors need to implment how to get the Channel and ChannelStore
     /// </summary>
-    public abstract class Registration
+    public abstract class RegistrationBase
     {
         private const string CHANNEL_KEY = "Channel";
         public const string PUSH_ID_KEY = "aerogear-push-id";

@@ -28,7 +28,7 @@ namespace AeroGear.Push
         public async Task shouldReadLocalPushConfig()
         {
             //given
-            var registration = new WnsRegistration();
+            var registration = new Registration();
 
             //when
             var config = await registration.LoadConfigJson("push-config.json");

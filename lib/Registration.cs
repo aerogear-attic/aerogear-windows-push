@@ -31,7 +31,7 @@ namespace AeroGear.Push
     /// <summary>
     ///     Wns based version
     /// </summary>
-    public class WnsRegistration : Registration
+    public class Registration : RegistrationBase
     {
         private void OnPushNotification(PushNotificationChannel sender, PushNotificationReceivedEventArgs args)
         {
