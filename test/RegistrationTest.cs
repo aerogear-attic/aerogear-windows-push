@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
@@ -36,6 +37,19 @@ namespace AeroGear.Push
 
             //then
             Assert.IsTrue(httpClient.Installation.deviceToken != null);
+        }
+
+        [TestMethod]
+        public void ShouldCreateUrlWithoutEndingSlash()
+        {
+            //given
+            var uri = new Uri("http://noslash/uri");
+
+            //when
+            var endpoint = new UPSHttpClient(uri, "dummy", "123").CreateEndpoint("test");
+
+            //then
+            Assert.AreEqual("http://noslash/uri/test", endpoint);
         }
     }
 

@@ -47,7 +47,7 @@ namespace AeroGear.Push
 
         public async Task<HttpStatusCode> Register(Installation installation)
         {
-            var request = CreateRequest(Uri + RegistrationEndpoint);
+            var request = CreateRequest(CreateEndpoint(RegistrationEndpoint));
             request.Method = "POST";
             using (
                 var postStream =
@@ -64,10 +64,15 @@ namespace AeroGear.Push
 
         public async Task<HttpStatusCode> SendMetrics(string pushMetricsId)
         {
-            var request = CreateRequest(Uri + MetricEndpoint + pushMetricsId);
+            var request = CreateRequest(CreateEndpoint(MetricEndpoint + pushMetricsId));
             request.Method = "PUT";
 
             return await ReadResponse(request);
+        }
+
+        public string CreateEndpoint(string path)
+        {
+            return (Uri.ToString().EndsWith("/") ? Uri.ToString() : Uri + "/") + path;
         }
 
         private HttpWebRequest CreateRequest(string endpoint)
@@ -79,7 +84,7 @@ namespace AeroGear.Push
             return request;
         }
 
-        private static async Task<HttpStatusCode> ReadResponse(HttpWebRequest request)
+        private static async Task<HttpStatusCode> ReadResponse(WebRequest request)
         {
             var responseObject =
                 (HttpWebResponse)
