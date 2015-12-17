@@ -89,7 +89,7 @@
     <Compile Include="PushReceivedEvent.cs" />
     <Compile Include="IUPSHttpClient.cs" />
     <Compile Include="PushNotification.cs" />
-    <Compile Include="Registration.cs" />
+    <Compile Include="RegistrationBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PushConfig.cs" />
     <Compile Include="UPSHttpClient.cs" />

@@ -28,7 +28,7 @@ namespace AeroGear.Push
     /// <summary>
     ///     Mpns based version
     /// </summary>
-    public class MpnsRegistration : Registration
+    public class Registration : RegistrationBase
     {
         private void PushChannel_ShellToastNotificationReceived(object sender, NotificationEventArgs e)
         {

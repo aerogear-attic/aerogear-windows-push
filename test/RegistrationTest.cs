@@ -30,7 +30,7 @@ namespace AeroGear.Push
         {
             //given
             var httpClient = new MockUpsHttpClient();
-            Registration registration = new WnsRegistration();
+            var registration = new Registration();
 
             //when
             await registration.Register(new PushConfig {VariantId = "dummy"}, httpClient);
