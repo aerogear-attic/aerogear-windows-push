@@ -24,7 +24,7 @@ protected override void OnNavigatedTo(NavigationEventArgs e)
     PushConfig pushConfig = new PushConfig() {
         UnifiedPushUri = new Uri(""), VariantId = "", VariantSecret = ""
     }; //[1]
-    Registration registration = new WnsRegistration();      // [2]
+    Registration registration = new Registration();      // [2]
     registration.PushReceivedEvent += HandleNotification;
     registration.Register(pushConfig);
 }
@@ -36,7 +36,7 @@ void HandleNotification(object sender, PushReceivedEvent e)
 ```
 
 * [1] add the url, variantId and varaintSecret of you Unified Push server
-* [2] choose WnsRegistration for wns otherwise MpnsRegistration.
+* [2] When a project is wp8 mpns protocol is used for windows 8.1 and above it's wns.
 
 or you can place a `push-config.json` file in the root of your project be sure to mark it as `content` with the following:
 
@@ -51,14 +51,14 @@ or you can place a `push-config.json` file in the root of your project be sure t
 This will be automatically be picked up by the registration:
 
 ```csharp
-Registration registration = new WnsRegistration();
+Registration registration = new Registration();
 registration.Register();
 ```
 
 if you want to dynamically add categories or an alias you can combine the two above:
 
 ```csharp
-Registration registration = new WnsRegistration();
+Registration registration = new Registration();
 PushConfig config = registration.LoadConfigJson("push-config.json");
 config.Categories = //user categories
 registration.Register(config);
