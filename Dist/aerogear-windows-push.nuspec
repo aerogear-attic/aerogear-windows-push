@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>aerogear-windows-push</id>
+    <version>0.1.1</version>
+    <authors>edewit</authors>
+    <owners>edewit</owners>
+    <licenseUrl>https://community.jboss.org/wiki/AeroGearLicensingAndCopyright</licenseUrl>
+    <projectUrl>http://aerogear.org/</projectUrl>
+    <iconUrl>http://design.jboss.org/aerogear/logo/final/aerogear_icon_32px.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Aerogear windows push notification SDK</description>
+    <releaseNotes>Added support for windows 10</releaseNotes>
+    <copyright>Copyright 2014</copyright>
+    <tags>Push WMS Unified</tags>
+  </metadata>
+</package>

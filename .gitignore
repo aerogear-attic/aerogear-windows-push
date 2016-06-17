@@ -5,7 +5,8 @@
 *.suo
 *.user
 *.sln.docstates
-
+Dist/lib
+**nupkg*
 # Build results
 
 [Dd]ebug/
