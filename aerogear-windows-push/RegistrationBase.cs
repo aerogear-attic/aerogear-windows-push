@@ -48,7 +48,7 @@ namespace AeroGear.Push
             return await Register(await LoadConfigJson(FILE_NAME), client);
         }
 
-        public async Task<string> Register(PushConfig pushConfig, IUPSHttpClient client)
+        public async virtual Task<string> Register(PushConfig pushConfig, IUPSHttpClient client)
         {
             Installation installation = CreateInstallation(pushConfig);
             ILocalStore store = CreateChannelStore();
